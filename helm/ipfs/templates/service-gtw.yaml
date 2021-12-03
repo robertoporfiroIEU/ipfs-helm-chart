@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ipfs.fullname" . }}-gtw
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs
+spec:
+  type: {{ .Values.service.gtw.type }}
+  ports:
+    - port: {{ .Values.service.gtw.port }}
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  {{- if .Values.service.gtw.ipAddress }}
+  loadBalancerIP: {{ .Values.service.gtw.ipAddress | quote }}
+  {{- end }}
+  selector:
+    {{- include "ipfs.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs

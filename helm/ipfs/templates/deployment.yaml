@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ipfs.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  selector:
+    matchLabels:
+      {{- include "ipfs.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ipfs
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "ipfs.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: ipfs
+    spec:
+      serviceAccountName: {{ include "ipfs.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - daemon
+            - --migrate=true
+          ports:
+            - name: swarm
+              containerPort: 4001
+              protocol: TCP
+            - name: api
+              containerPort: 5001
+              protocol: TCP
+            - name: gtw
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: IPFS_LOGGING
+              value: {{ .Values.log.level }}
+            {{- if .Values.service.swarm.ipAddress }}
+            - name: IPFS_ADDRESS_ANNOUNCE
+              value: /ip4/{{ .Values.service.swarm.ipAddress }}/tcp/{{ .Values.service.swarm.port }}
+            {{- end }}
+          livenessProbe:
+            tcpSocket:
+              port: swarm
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            tcpSocket:
+              port: swarm
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 15
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data/ipfs
+            - name: start-ipfs
+              mountPath: /usr/local/bin/start_ipfs
+              subPath: start_ipfs
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "ipfs.fullname" . ) }}
+        - name: start-ipfs
+          configMap:
+            name: {{ include "ipfs.fullname" . }}
+            items:
+              - key: start_ipfs
+                path: start_ipfs
+                mode: 0555
