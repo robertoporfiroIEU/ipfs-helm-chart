@@ -1,5 +1,3 @@
 ingress:
   enabled: true
   host: "ipfs.localhost"
-networkPolicy:
-  enabled: false
