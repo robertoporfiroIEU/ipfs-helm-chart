@@ -3,7 +3,7 @@ fullnameOverride: ""
 image:
   repository: ipfs/go-ipfs
   pullPolicy: IfNotPresent
-  tag: v0.10.0
+  # tag: v0.10.0
 log:
   level: INFO
 persistence:
