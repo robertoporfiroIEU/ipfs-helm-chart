@@ -59,8 +59,8 @@ spec:
             - name: start-ipfs
               mountPath: /usr/local/bin/start_ipfs
               subPath: start_ipfs
-        - name: ipfs-cluster
-          image: "{{ .Values.ipfsCluster.image.repository }}:{{ .Values.ipfsCluster.image.tag | default .Chart.AppVersion }}"
+        - name: cluster
+          image: "{{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: cluster-api
@@ -82,7 +82,7 @@ spec:
             - name: cluster-storage
               mountPath: /data/ipfs-cluster
           resources:
-            {{- toYaml .Values.ipfsCluster.resources | nindent 12 }}
+            {{- toYaml .Values.cluster.resources | nindent 12 }}
       volumes:
         - name: start-ipfs
           configMap:
@@ -107,10 +107,10 @@ spec:
         name: cluster-storage
       spec:
         accessModes:
-          {{- .Values.ipfsCluster.persistence.accessModes | toYaml | nindent 10 }}
+          {{- .Values.cluster.persistence.accessModes | toYaml | nindent 10 }}
         resources:
           requests:
-            storage: {{ .Values.ipfsCluster.persistence.size | quote }}
-        {{- if .Values.ipfsCluster.persistence.storageClass }}
-        storageClassName: {{ .Values.ipfsCluster.persistence.storageClass }}
+            storage: {{ .Values.cluster.persistence.size | quote }}
+        {{- if .Values.cluster.persistence.storageClass }}
+        storageClassName: {{ .Values.cluster.persistence.storageClass }}
         {{- end }}

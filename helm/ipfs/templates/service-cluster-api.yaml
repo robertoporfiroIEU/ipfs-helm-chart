@@ -7,14 +7,14 @@ metadata:
     {{- include "ipfs.labels" . | nindent 4 }}
     app.kubernetes.io/component: ipfs
 spec:
-  type: {{ .Values.ipfsCluster.service.api.type }}
+  type: {{ .Values.cluster.service.api.type }}
   ports:
-    - port: {{ .Values.ipfsCluster.service.api.port }}
+    - port: {{ .Values.cluster.service.api.port }}
       targetPort: cluster-api
       protocol: TCP
       name: cluster-api
-  {{- if .Values.ipfsCluster.service.api.ipAddress }}
-  loadBalancerIP: {{ .Values.ipfsCluster.service.api.ipAddress | quote }}
+  {{- if .Values.cluster.service.api.ipAddress }}
+  loadBalancerIP: {{ .Values.cluster.service.api.ipAddress | quote }}
   {{- end }}
   selector:
     {{- include "ipfs.selectorLabels" . | nindent 4 }}

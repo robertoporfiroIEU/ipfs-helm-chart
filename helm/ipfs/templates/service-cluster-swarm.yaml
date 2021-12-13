@@ -7,14 +7,14 @@ metadata:
     {{- include "ipfs.labels" . | nindent 4 }}
     app.kubernetes.io/component: ipfs
 spec:
-  type: {{ .Values.ipfsCluster.service.swarm.type }}
+  type: {{ .Values.cluster.service.swarm.type }}
   ports:
-    - port: {{ .Values.ipfsCluster.service.swarm.port }}
+    - port: {{ .Values.cluster.service.swarm.port }}
       targetPort: cluster-swarm
       protocol: TCP
       name: cluster-swarm
-  {{- if .Values.ipfsCluster.service.swarm.ipAddress }}
-  loadBalancerIP: {{ .Values.ipfsCluster.service.swarm.ipAddress | quote }}
+  {{- if .Values.cluster.service.swarm.ipAddress }}
+  loadBalancerIP: {{ .Values.cluster.service.swarm.ipAddress | quote }}
   {{- end }}
   selector:
     {{- include "ipfs.selectorLabels" . | nindent 4 }}

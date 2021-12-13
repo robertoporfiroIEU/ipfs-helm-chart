@@ -48,7 +48,7 @@ ingress:
       namespaceSelector:
         matchLabels:
           name: ingress
-ipfsCluster:
+cluster:
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent
