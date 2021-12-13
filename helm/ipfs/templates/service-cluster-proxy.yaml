@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ipfs.fullname" . }}-cluster-proxy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs
+spec:
+  type: {{ .Values.ipfsCluster.service.proxy.type }}
+  ports:
+    - port: {{ .Values.ipfsCluster.service.proxy.port }}
+      targetPort: cluster-proxy
+      protocol: TCP
+      name: cluster-proxy
+  {{- if .Values.ipfsCluster.service.proxy.ipAddress }}
+  loadBalancerIP: {{ .Values.ipfsCluster.service.proxy.ipAddress | quote }}
+  {{- end }}
+  selector:
+    {{- include "ipfs.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs

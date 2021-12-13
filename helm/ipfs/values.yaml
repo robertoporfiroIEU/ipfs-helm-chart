@@ -48,3 +48,30 @@ ingress:
       namespaceSelector:
         matchLabels:
           name: ingress
+ipfsCluster:
+  image:
+    repository: ipfs/ipfs-cluster
+    pullPolicy: IfNotPresent
+    tag: v0.14.2
+  persistence:
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+  service:
+    swarm:
+      type: ClusterIP
+      port: 9096
+      ipAddress: null
+    api:
+      type: ClusterIP
+      port: 9094
+      ipAddress: null
+    proxy:
+      type: ClusterIP
+      port: 9095
+      ipAddress: null
+  resources:
+    requests:
+      memory: 50Mi
+      cpu: 400m

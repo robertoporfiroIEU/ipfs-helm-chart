@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccountName: {{ include "ipfs.serviceAccountName" . }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: ipfs
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
@@ -48,15 +48,9 @@ spec:
           livenessProbe:
             tcpSocket:
               port: swarm
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-            periodSeconds: 15
           readinessProbe:
             tcpSocket:
               port: swarm
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-            periodSeconds: 15
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -65,6 +59,30 @@ spec:
             - name: start-ipfs
               mountPath: /usr/local/bin/start_ipfs
               subPath: start_ipfs
+        - name: ipfs-cluster
+          image: "{{ .Values.ipfsCluster.image.repository }}:{{ .Values.ipfsCluster.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: cluster-api
+              containerPort: 9094
+              protocol: TCP
+            - name: cluster-proxy
+              containerPort: 9095
+              protocol: TCP
+            - name: cluster-swarm
+              containerPort: 9096
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: cluster-swarm
+          readinessProbe:
+            tcpSocket:
+              port: cluster-swarm
+          volumeMounts:
+            - name: cluster-storage
+              mountPath: /data/ipfs-cluster
+          resources:
+            {{- toYaml .Values.ipfsCluster.resources | nindent 12 }}
       volumes:
         - name: start-ipfs
           configMap:
@@ -84,4 +102,15 @@ spec:
             storage: {{ .Values.persistence.size | quote }}
         {{- if .Values.persistence.storageClass }}
         storageClassName: {{ .Values.persistence.storageClass }}
+        {{- end }}
+    - metadata:
+        name: cluster-storage
+      spec:
+        accessModes:
+          {{- .Values.ipfsCluster.persistence.accessModes | toYaml | nindent 10 }}
+        resources:
+          requests:
+            storage: {{ .Values.ipfsCluster.persistence.size | quote }}
+        {{- if .Values.ipfsCluster.persistence.storageClass }}
+        storageClassName: {{ .Values.ipfsCluster.persistence.storageClass }}
         {{- end }}
