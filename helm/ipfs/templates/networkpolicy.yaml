@@ -17,5 +17,10 @@ spec:
       - podSelector:
           matchLabels:
             {{ include "ipfs.fullname" . }}-client: "true"
+      # allow communication between the pods of this chart
+      - podSelector:
+          matchLabels:
+            {{- include "ipfs.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: ipfs
       {{- .Values.ingress.from | toYaml | nindent 6 }}
 {{- end }}
