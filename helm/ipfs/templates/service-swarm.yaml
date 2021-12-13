@@ -1,21 +1,25 @@
+{{- range $i, $n := until (int .Values.replicas) }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "ipfs.fullname" . }}-swarm
-  namespace: {{ .Release.Namespace }}
+  name: {{ include "ipfs.fullname" $ }}-swarm-{{ $i }}
+  namespace: {{ $.Release.Namespace }}
   labels:
-    {{- include "ipfs.labels" . | nindent 4 }}
+    {{- include "ipfs.labels" $ | nindent 4 }}
     app.kubernetes.io/component: ipfs
 spec:
-  type: {{ .Values.service.swarm.type }}
+  type: {{ (index $.Values.service.swarm $i).type }}
   ports:
-    - port: {{ .Values.service.swarm.port }}
+    - port: {{ (index $.Values.service.swarm $i).port }}
       targetPort: 4001
       protocol: TCP
       name: swarm
-  {{- if .Values.service.swarm.ipAddress }}
-  loadBalancerIP: {{ .Values.service.swarm.ipAddress | quote }}
+  {{- if (index $.Values.service.swarm $i).ipAddress }}
+  loadBalancerIP: {{ (index $.Values.service.swarm $i).ipAddress | quote }}
   {{- end }}
   selector:
-    {{- include "ipfs.selectorLabels" . | nindent 4 }}
+    {{- include "ipfs.selectorLabels" $ | nindent 4 }}
     app.kubernetes.io/component: ipfs
+    statefulset.kubernetes.io/pod-name: {{ include "ipfs.fullname" $ }}-{{ $i }}
+{{- end }}

@@ -3,3 +3,12 @@ ingress:
   host: "ipfs.localhost"
 cluster:
   enabled: true
+replicas: 2
+service:
+  swarm:
+    - type: ClusterIP
+      port: 4001
+      ipAddress: null
+    - type: ClusterIP
+      port: 4001
+      ipAddress: null

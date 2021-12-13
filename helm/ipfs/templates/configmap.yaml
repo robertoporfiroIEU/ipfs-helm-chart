@@ -63,7 +63,7 @@ data:
 
     fi
 
-    if [ ! -z "$IPFS_ADDRESS_ANNOUNCE" ] ; then
+    if [ ! -z "$(IPFS_ADDRESS_ANNOUNCE_$HOSTNAME)" ] ; then
       ipfs config --json Addresses.Announce "[\"$IPFS_ADDRESS_ANNOUNCE\"]"
     fi
 

@@ -1,5 +1,6 @@
 nameOverride: ""
 fullnameOverride: ""
+replicas: 1
 image:
   repository: ipfs/go-ipfs
   pullPolicy: IfNotPresent
@@ -13,9 +14,10 @@ persistence:
   size: 1Gi
 service:
   swarm:
-    type: ClusterIP
-    port: 4001
-    ipAddress: null
+    # number of entries must match the number of replicas
+    - type: ClusterIP
+      port: 4001
+      ipAddress: null
   api:
     type: ClusterIP
     port: 5001
