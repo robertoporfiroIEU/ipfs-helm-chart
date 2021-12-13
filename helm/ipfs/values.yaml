@@ -7,8 +7,6 @@ image:
 log:
   level: INFO
 persistence:
-  enabled: true
-  existingClaim: ""
   storageClass: ""
   accessModes:
     - ReadWriteOnce
