@@ -1,3 +1,5 @@
 ingress:
   enabled: true
   host: "ipfs.localhost"
+cluster:
+  enabled: true

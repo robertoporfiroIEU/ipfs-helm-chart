@@ -49,6 +49,7 @@ ingress:
         matchLabels:
           name: ingress
 cluster:
+  enabled: true
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent
