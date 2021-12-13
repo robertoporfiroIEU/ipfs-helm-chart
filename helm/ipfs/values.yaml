@@ -20,7 +20,7 @@ service:
     type: ClusterIP
     port: 5001
     ipAddress: null
-  gtw:
+  gateway:
     type: ClusterIP
     port: 8080
     ipAddress: null
