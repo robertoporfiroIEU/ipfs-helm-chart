@@ -3,7 +3,10 @@ ingress:
   host: "ipfs.localhost"
 cluster:
   enabled: true
-  consensus: raft
+  configuration:
+    cluster:
+      consensus: raft
+      replication_factor_min: 1
 replicas: 3
 service:
   swarm:

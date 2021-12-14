@@ -75,8 +75,12 @@ spec:
                 secretKeyRef:
                   name: {{ include "ipfs.fullname" . }}
                   key: cluster-secret
-            - name: IPFS_CLUSTER_CONSENSUS
-              value: {{ .Values.cluster.consensus }}
+            {{- range $sectionName, $sectionContent := .Values.cluster.configuration }}
+            {{- range $k, $v := $sectionContent }}
+            - name: IPFS_{{ $sectionName | upper }}_{{ regexReplaceAll "_" $k "" | upper }}
+              value: {{ $v | quote }}
+            {{- end }}
+            {{- end }}
           ports:
             - name: cluster-api
               containerPort: 9094
