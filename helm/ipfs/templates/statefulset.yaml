@@ -96,6 +96,14 @@ spec:
               - key: start_ipfs
                 path: start_ipfs
                 mode: 0555
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: ipfs-storage

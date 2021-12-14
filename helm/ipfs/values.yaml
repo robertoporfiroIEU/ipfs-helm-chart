@@ -30,6 +30,8 @@ resources:
   requests:
     memory: 50Mi
     cpu: 400m
+affinity: {}
+tolerations: {}
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
