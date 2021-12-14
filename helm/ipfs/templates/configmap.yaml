@@ -75,4 +75,3 @@ data:
     fi
 
     exec ipfs "$@"
-    ipfs config --json Gateway.PublicGateways '{"ipfs.localhost": {"UseSubdomains": false, "Paths": ["/ipfs", "/ipns"]}, "localhost": {"UseSubdomains": false, "Paths": ["/ipfs", "/ipns"]}}'
