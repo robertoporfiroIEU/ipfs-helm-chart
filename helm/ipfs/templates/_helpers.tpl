@@ -65,22 +65,25 @@ Create the name of the service account to use
 Create secret data with automatic initialization
 Parameter: [$, Secret name, [Secret key 1, Secret key 2, ...]]
 */}}
-{{- define "ipfs.automaticSecret" -}}
+{{- define "ipfs.automaticHexSecret" -}}
 {{- $ := index . 0 -}}
 {{- $name := index . 1 -}}
-{{- $keys := index . 2 -}}
-{{- $secretLength := 20 }}
-{{- if ($.Values.global).dev }}
-{{- range $keys }}
-{{ . }}: {{ printf "%s-%s" $name . | sha256sum | trunc $secretLength | b64enc | quote }}
-{{- end }}
+{{- $key := index . 2 -}}
+{{- $secretLength := int (index . 3) }}
+{{- $userValue := index . 4 }}
+{{- if $userValue }}
+  {{ $key }}: {{ $userValue | b64enc | quote }}
+{{- else if ($.Values.global).dev }}
+  {{- $bs := printf "%s-%s" $name . | sha256sum -}}
+  {{- $more_string := printf "%s%s%s%s%s%s%s%s%s%s" $bs $bs $bs $bs $bs $bs $bs $bs $bs $bs }}
+  {{- $rand_list := $more_string | b32enc | lower | splitList "" -}}
+  {{- $reduced_list := without $rand_list "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" "=" }}
+  {{ $key }}: {{ $reduced_list | join "" | trunc $secretLength | b64enc | quote }}
 {{- else if and ($.Release.IsUpgrade) (lookup "v1" "Secret" $.Release.Namespace $name) }}
-{{- range $keys }}
-{{ . }}: {{ index (lookup "v1" "Secret" $.Release.Namespace $name).data . }}
-{{- end }}
+  {{ $key }}: {{ index (lookup "v1" "Secret" $.Release.Namespace $name).data $key }}
 {{- else }}
-{{- range $keys }}
-{{ . }}: {{ randAlphaNum $secretLength | b64enc | quote }}
-{{- end }}
+  {{- $rand_list := randAlphaNum 1000 | splitList "" -}}
+  {{- $reduced_list := without $rand_list "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" }}
+  {{ $key }}: {{ $reduced_list | join "" | trunc $secretLength | b64enc | quote }}
 {{- end }}
 {{- end }}

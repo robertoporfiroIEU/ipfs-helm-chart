@@ -54,6 +54,8 @@ ingress:
           name: ingress
 cluster:
   enabled: true
+  # automatically generated if null
+  secret: null
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent
@@ -80,3 +82,5 @@ cluster:
     requests:
       memory: 50Mi
       cpu: 400m
+global:
+  dev: false

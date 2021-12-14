@@ -66,6 +66,12 @@ spec:
         - name: cluster
           image: "{{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
+          env:
+            - name: CLUSTER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ipfs.fullname" . }}
+                  key: cluster-secret
           ports:
             - name: cluster-api
               containerPort: 9094

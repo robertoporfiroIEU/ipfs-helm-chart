@@ -12,3 +12,5 @@ service:
     - type: ClusterIP
       port: 4001
       ipAddress: null
+global:
+  dev: true
