@@ -17,7 +17,7 @@ spec:
       - podSelector:
           matchLabels:
             {{ include "ipfs.fullname" . }}-client: "true"
-      # allow communication between the pods of this chart
+      # allow communication between the pods of this chart, when replicas is greater than 1
       - podSelector:
           matchLabels:
             {{- include "ipfs.selectorLabels" . | nindent 12 }}

@@ -12,7 +12,7 @@ spec:
   type: {{ (index $.Values.service.swarm $i).type }}
   ports:
     - port: {{ (index $.Values.service.swarm $i).port }}
-      targetPort: 4001
+      targetPort: swarm
       protocol: TCP
       name: swarm
   {{- if (index $.Values.service.swarm $i).ipAddress }}

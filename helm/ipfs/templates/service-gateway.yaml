@@ -10,7 +10,7 @@ spec:
   type: {{ .Values.service.gateway.type }}
   ports:
     - port: {{ .Values.service.gateway.port }}
-      targetPort: 8080
+      targetPort: gateway
       protocol: TCP
       name: http
   {{- if .Values.service.gateway.ipAddress }}

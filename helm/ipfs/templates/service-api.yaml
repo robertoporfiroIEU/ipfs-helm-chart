@@ -10,7 +10,13 @@ spec:
   type: {{ .Values.service.api.type }}
   ports:
     - port: {{ .Values.service.api.port }}
-      targetPort: 5001
+      {{- if .Values.cluster.enabled }}
+      # map the api to the cluster proxy, so we can use the same service
+      # with and without ipfs-cluster
+      targetPort: cluster-proxy
+      {{- else }}
+      targetPort: api
+      {{- end }}
       protocol: TCP
       name: api
   {{- if .Values.service.api.ipAddress }}
