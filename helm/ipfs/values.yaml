@@ -56,6 +56,10 @@ cluster:
   enabled: true
   # automatically generated if null
   secret: null
+  # consensus used by ipfs-cluster. Can be either `crdt` or `raft`.
+  # the consensus can't be (easily) changed once the cluster is initialized.
+  # see https://cluster.ipfs.io/documentation/guides/consensus
+  consensus: crdt
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent

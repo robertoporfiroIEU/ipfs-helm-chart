@@ -72,6 +72,8 @@ spec:
                 secretKeyRef:
                   name: {{ include "ipfs.fullname" . }}
                   key: cluster-secret
+            - name: IPFS_CLUSTER_CONSENSUS
+              value: {{ .Values.cluster.consensus }}
           ports:
             - name: cluster-api
               containerPort: 9094
@@ -91,6 +93,9 @@ spec:
           volumeMounts:
             - name: cluster-storage
               mountPath: /data/ipfs-cluster
+            - name: start-ipfs-cluster
+              mountPath: /usr/local/bin/entrypoint.sh
+              subPath: start_ipfs_cluster
           resources:
             {{- toYaml .Values.cluster.resources | nindent 12 }}
         {{- end }}
@@ -101,6 +106,13 @@ spec:
             items:
               - key: start_ipfs
                 path: start_ipfs
+                mode: 0555
+        - name: start-ipfs-cluster
+          configMap:
+            name: {{ include "ipfs.fullname" . }}
+            items:
+              - key: start_ipfs_cluster
+                path: start_ipfs_cluster
                 mode: 0555
       {{- with .Values.affinity }}
       affinity:
