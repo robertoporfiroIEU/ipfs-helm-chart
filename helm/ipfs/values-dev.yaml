@@ -3,7 +3,7 @@ ingress:
   host: "ipfs.localhost"
 cluster:
   enabled: true
-replicas: 2
+replicas: 1
 service:
   swarm:
     - type: ClusterIP

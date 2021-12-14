@@ -21,5 +21,7 @@ spec:
   selector:
     {{- include "ipfs.selectorLabels" $ | nindent 4 }}
     app.kubernetes.io/component: ipfs
+    {{- if ne (int $.Values.replicas) 1 }}
     statefulset.kubernetes.io/pod-name: {{ include "ipfs.fullname" $ }}-{{ $i }}
+    {{- end }}
 {{- end }}
