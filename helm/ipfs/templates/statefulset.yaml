@@ -10,7 +10,7 @@ metadata:
     reloader.stakater.com/auto: "true"
 spec:
   replicas: {{ .Values.replicas }}
-  serviceName: {{ include "ipfs.fullname" . }}-headless
+  serviceName: {{ include "ipfs.fullname" . }}
   selector:
     matchLabels:
       {{- include "ipfs.selectorLabels" . | nindent 6 }}
@@ -67,6 +67,9 @@ spec:
           image: "{{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           env:
+            # Expose API
+            - name: CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS
+              value: /ip4/0.0.0.0/tcp/9094
             - name: CLUSTER_SECRET
               valueFrom:
                 secretKeyRef:

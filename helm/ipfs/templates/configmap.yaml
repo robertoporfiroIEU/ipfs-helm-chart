@@ -101,6 +101,16 @@ data:
         echo "This container only runs ipfs-cluster-service. ipfs needs to be run separately!"
         echo "Initializing default configuration..."
         ipfs-cluster-service init --consensus "${IPFS_CLUSTER_CONSENSUS}" --datastore "${IPFS_CLUSTER_DATASTORE}"
+        # configure the bootstrap option for all the nodes except node 0
+        if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-0" ]; then
+            base_addr=/dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+            until ipfs-cluster-ctl --host ${base_addr}/tcp/9094 id; do
+                echo waiting for ${base_addr}/tcp/9094
+                sleep 1
+            done
+            bootstrap_id=`ipfs-cluster-ctl --host ${base_addr}/tcp/9094 id | head -1 | cut -d ' ' -f1`
+            bootstrap="--bootstrap ${base_addr}/tcp/9096/p2p/${bootstrap_id}"
+        fi
     fi
 
-    exec ipfs-cluster-service $@
+    exec ipfs-cluster-service $@ $bootstrap
