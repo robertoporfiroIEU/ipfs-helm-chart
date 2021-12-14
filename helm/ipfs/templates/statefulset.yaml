@@ -75,6 +75,13 @@ spec:
                 secretKeyRef:
                   name: {{ include "ipfs.fullname" . }}
                   key: cluster-secret
+            {{- if .Values.cluster.restapiCredentials }}
+            - name: CLUSTER_RESTAPI_BASICAUTHCREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ipfs.fullname" . }}
+                  key: restapi-credentials
+            {{- end }}
             {{- range $sectionName, $sectionContent := .Values.cluster.configuration }}
             {{- range $k, $v := $sectionContent }}
             - name: IPFS_{{ $sectionName | upper }}_{{ regexReplaceAll "_" $k "" | upper }}

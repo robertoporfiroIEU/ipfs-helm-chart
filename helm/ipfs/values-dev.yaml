@@ -3,6 +3,7 @@ ingress:
   host: "ipfs.localhost"
 cluster:
   enabled: true
+  restapiCredentials: foo:supersecure
   configuration:
     cluster:
       consensus: raft

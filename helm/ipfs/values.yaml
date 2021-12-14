@@ -54,13 +54,17 @@ ingress:
           name: ingress
 cluster:
   enabled: true
-  # automatically generated if null
+  # cluster secret, automatically generated if null
   secret: null
+  # rest api credentials, not used if null
+  rest_api_credentials: null
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent
     tag: v0.14.2
-  # extra configuration to pass to ipfs-cluster
+  # extra configuration to pass to ipfs-cluster.
+  # cluster.secret and restapi.basic_auth_credentials are sensitive values that
+  # shouldn't be stored in this map
   configuration: {}
   # cluster:
   #   replication_factor_min: 2
