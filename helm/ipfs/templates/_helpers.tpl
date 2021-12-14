@@ -84,35 +84,3 @@ Parameter: [$, Secret name, [Secret key 1, Secret key 2, ...]]
 {{- end }}
 {{- end }}
 {{- end }}
-
-{{/*
-Db fullname
-*/}}
-{{- define "ipfs.db.fullname" -}}
-{{- if .Values.db.fullnameOverride }}
-{{- .Values.db.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.db.nameOverride }}
-{{- if eq $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{/*
-Keycloak fullname
-*/}}
-{{- define "ipfs.keycloak.fullname" -}}
-{{- if .Values.keycloak.fullnameOverride }}
-{{- .Values.keycloak.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.keycloak.nameOverride }}
-{{- if eq $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-{{- end }}
