@@ -91,5 +91,9 @@ cluster:
     requests:
       memory: 250Mi
       cpu: 100m
+metrics:
+  enabled: false
+  interval:
+  scrapeTimeout:
 global:
   dev: false

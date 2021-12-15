@@ -62,13 +62,8 @@ data:
 
     fi
 
-    {{- if .Values.cluster.enabled }}
-    # make the api reachable only to ipfs-cluster
-    ipfs config Addresses.API /ip4/127.0.0.1/tcp/5001
-    {{- else }}
     # make the api reachable from outside the pod
     ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
-    {{- end }}
 
     if [ ! -z "$(IPFS_ADDRESS_ANNOUNCE_$HOSTNAME)" ] ; then
         ipfs config --json Addresses.Announce "[\"$IPFS_ADDRESS_ANNOUNCE\"]"
