@@ -65,7 +65,9 @@ cluster:
   # extra configuration to pass to ipfs-cluster.
   # cluster.secret and restapi.basic_auth_credentials are sensitive values that
   # shouldn't be stored in this map
-  configuration: {}
+  configuration:
+    metrics:
+      prometheus_endpoint: /ip4/0.0.0.0/tcp/8888
   # cluster:
   #   replication_factor_min: 2
   #   consensus: raft

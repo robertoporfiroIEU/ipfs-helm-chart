@@ -98,6 +98,11 @@ spec:
             - name: cluster-swarm
               containerPort: 9096
               protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: cluster-metrics
+              containerPort: 8888
+              protocol: TCP
+            {{- end }}
           livenessProbe:
             tcpSocket:
               port: cluster-swarm
