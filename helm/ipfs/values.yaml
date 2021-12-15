@@ -28,8 +28,8 @@ service:
     ipAddress: null
 resources:
   requests:
-    memory: 50Mi
-    cpu: 400m
+    memory: 400Mi
+    cpu: 100m
 affinity: {}
 tolerations: {}
 serviceAccount:
@@ -89,7 +89,7 @@ cluster:
       ipAddress: null
   resources:
     requests:
-      memory: 50Mi
-      cpu: 400m
+      memory: 250Mi
+      cpu: 100m
 global:
   dev: false
