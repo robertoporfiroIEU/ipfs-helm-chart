@@ -8,9 +8,16 @@ metadata:
     app.kubernetes.io/component: ipfs
 spec:
   ports:
-    - port: 8080
+    - port: 5001
       protocol: TCP
-      name: http
+      name: metrics
+      targetPort: api
+    {{- if and .Values.cluster.enabled .Values.metrics.enabled }}
+    - port: 8888
+      protocol: TCP
+      name: cluster-metrics
+      targetPort: cluster-metrics
+    {{- end }}
   clusterIP: None
   selector:
     {{- include "ipfs.selectorLabels" . | nindent 4 }}
