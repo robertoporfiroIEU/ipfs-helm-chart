@@ -84,7 +84,7 @@ spec:
             {{- end }}
             {{- range $sectionName, $sectionContent := .Values.cluster.configuration }}
             {{- range $k, $v := $sectionContent }}
-            - name: IPFS_{{ $sectionName | upper }}_{{ regexReplaceAll "_" $k "" | upper }}
+            - name: CLUSTER_{{ $sectionName | upper }}_{{ regexReplaceAll "_" $k "" | upper }}
               value: {{ $v | quote }}
             {{- end }}
             {{- end }}
