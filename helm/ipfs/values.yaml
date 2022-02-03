@@ -57,7 +57,7 @@ cluster:
   # cluster secret, automatically generated if null
   secret: null
   # rest api credentials, not used if null
-  rest_api_credentials: null
+  restApiCredentials: null
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent

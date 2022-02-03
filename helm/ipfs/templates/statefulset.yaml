@@ -75,7 +75,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "ipfs.fullname" . }}
                   key: cluster-secret
-            {{- if .Values.cluster.restapiCredentials }}
+            {{- if .Values.cluster.restApiCredentials }}
             - name: CLUSTER_RESTAPI_BASICAUTHCREDENTIALS
               valueFrom:
                 secretKeyRef:
