@@ -50,6 +50,8 @@ ingress:
   # host:
   annotations:
     kubernetes.io/tls-acme: "true"
+  # tls secret name for all the ingresses
+  # secretName:
   from:
     - podSelector: {}
       namespaceSelector:
@@ -68,6 +70,8 @@ ingress:
     #     namespaceSelector:
     #       matchLabels:
     #         name: ingress
+    # tls secret name
+    # secretName:
   api:
     enabled: false
     # annotations may be specified here just for the api
@@ -81,6 +85,8 @@ ingress:
     #     namespaceSelector:
     #       matchLabels:
     #         name: ingress
+    # tls secret name
+    # secretName:
 
 apiProxy:
   enabled: false

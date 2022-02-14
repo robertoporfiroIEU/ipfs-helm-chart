@@ -15,7 +15,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.ingress.api.host | default .Values.ingress.host | required "please provide a hostname for the ingress" | quote }}
-      secretName: {{ $fullName }}-tls
+      secretName: {{ .Values.ingress.api.secretName | default .Values.ingress.secretName | default (printf "%s-tls" $fullName) }}
   rules:
     - host: {{ .Values.ingress.api.host | default .Values.ingress.host | quote }}
       http:
