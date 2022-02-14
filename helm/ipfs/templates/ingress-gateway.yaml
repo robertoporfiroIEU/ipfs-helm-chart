@@ -1,5 +1,5 @@
-{{- if .Values.ingress.enabled -}}
-{{- $fullName := include "ipfs.fullname" . -}}
+{{- if .Values.ingress.gateway.enabled -}}
+{{- $fullName := printf "%s-gateway" (include "ipfs.fullname" .) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -7,24 +7,24 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- with .Values.ingress.gateway.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   tls:
     - hosts:
-        - {{ .Values.ingress.host | quote }}
+        - {{ .Values.ingress.gateway.host | quote }}
       secretName: {{ $fullName }}-tls
   rules:
-    - host: {{ .Values.ingress.host | quote }}
+    - host: {{ .Values.ingress.gateway.host | quote }}
       http:
         paths:
           - path: /ipfs
             pathType: Prefix
             backend:
               service:
-                name: {{ $fullName }}-gateway
+                name: {{ $fullName }}
                 port:
                   name: http
 {{- end -}}

@@ -22,5 +22,5 @@ spec:
           matchLabels:
             {{- include "ipfs.selectorLabels" . | nindent 12 }}
             app.kubernetes.io/component: ipfs
-      {{- .Values.ingress.from | toYaml | nindent 6 }}
+      {{- .Values.ingress.gateway.from | toYaml | nindent 6 }}
 {{- end }}

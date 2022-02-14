@@ -1,6 +1,10 @@
 ingress:
-  enabled: true
-  host: "ipfs.localhost"
+  gateway:
+    enabled: true
+    host: "ipfs.localhost"
+  api:
+    enabled: true
+    host: "ipfs.localhost"
 cluster:
   enabled: true
   restApiCredentials: foo:supersecure

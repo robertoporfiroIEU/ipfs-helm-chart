@@ -43,15 +43,26 @@ serviceAccount:
 networkPolicy:
   enabled: true
 ingress:
-  enabled: false
-  annotations:
-    kubernetes.io/tls-acme: "true"
-  host: ""
-  from:
-    - podSelector: {}
-      namespaceSelector:
-        matchLabels:
-          name: ingress
+  gateway:
+    enabled: false
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    host: ""
+    from:
+      - podSelector: {}
+        namespaceSelector:
+          matchLabels:
+            name: ingress
+  api:
+    enabled: false
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    host: ""
+    from:
+      - podSelector: {}
+        namespaceSelector:
+          matchLabels:
+            name: ingress
 apiProxy:
   enabled: false
   # use a reverse proxy to add a basic authentication to the ipfs api
