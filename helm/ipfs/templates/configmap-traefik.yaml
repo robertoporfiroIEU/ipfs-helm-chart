@@ -1,3 +1,4 @@
+{{- if .Values.apiProxy.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -17,21 +18,21 @@ data:
     entryPoints:
       web:
         address: ":6001"
-        {{- if .Values.api.auth }}
+        {{- if .Values.apiProxy.auth }}
         http:
           middlewares:
             - basic-auth
         {{- end}}
     log:
       level: INFO
-{{- if .Values.api.auth }}
+{{- if .Values.apiProxy.auth }}
   auth.yaml: |-
     http:
       middlewares:
         basic-auth:
           basicAuth:
             users:
-              {{- range $k, $v := .Values.api.users }}
+              {{- range $k, $v := .Values.apiProxy.users }}
               - {{ htpasswd $k $v | quote }}
               {{- end }}
 {{- end }}
@@ -50,3 +51,4 @@ data:
               {{- else }}
               - url: "http://localhost:5001"
               {{- end }}
+{{- end }}

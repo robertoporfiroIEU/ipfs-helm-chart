@@ -118,7 +118,7 @@ spec:
           resources:
             {{- toYaml .Values.cluster.resources | nindent 12 }}
         {{- end }}
-        {{- if .Values.api.auth }}
+        {{- if .Values.apiProxy.auth }}
         - name: api-proxy
           image: traefik:2.6
           imagePullPolicy: IfNotPresent
@@ -136,7 +136,7 @@ spec:
             - name: traefik-conf
               mountPath: /etc/traefik/
           resources:
-            {{- toYaml .Values.api.resources | nindent 12 }}
+            {{- toYaml .Values.apiProxy.resources | nindent 12 }}
         {{- end }}
       volumes:
         - name: start-ipfs
@@ -153,7 +153,7 @@ spec:
               - key: start_ipfs_cluster
                 path: start_ipfs_cluster
                 mode: 0555
-        {{- if .Values.api.auth }}
+        {{- if .Values.apiProxy.auth }}
         - name: traefik-conf
           configMap:
             name: {{ include "ipfs.fullname" . }}-traefik
