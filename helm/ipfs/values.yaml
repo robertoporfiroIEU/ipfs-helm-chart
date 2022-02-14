@@ -50,6 +50,11 @@ ingress:
   # host:
   annotations:
     kubernetes.io/tls-acme: "true"
+  from:
+    - podSelector: {}
+      namespaceSelector:
+        matchLabels:
+          name: ingress
   gateway:
     enabled: false
     # annotations may be specified here just for the gateway
@@ -57,11 +62,12 @@ ingress:
     #   kubernetes.io/tls-acme: "true"
     # host name may be specified here just for the gateway
     # host:
-    from:
-      - podSelector: {}
-        namespaceSelector:
-          matchLabels:
-            name: ingress
+    # from network policy may be specified here just for the api
+    # from:
+    #   - podSelector: {}
+    #     namespaceSelector:
+    #       matchLabels:
+    #         name: ingress
   api:
     enabled: false
     # annotations may be specified here just for the api
@@ -69,11 +75,13 @@ ingress:
     #   kubernetes.io/tls-acme: "true"
     # host name may be specified here just for the gateway
     # host:
-    from:
-      - podSelector: {}
-        namespaceSelector:
-          matchLabels:
-            name: ingress
+    # from network policy may be specified here just for the api
+    # from:
+    #   - podSelector: {}
+    #     namespaceSelector:
+    #       matchLabels:
+    #         name: ingress
+
 apiProxy:
   enabled: false
   # use a reverse proxy to add a basic authentication to the ipfs api
