@@ -52,6 +52,16 @@ ingress:
       namespaceSelector:
         matchLabels:
           name: ingress
+api:
+  # use a reverse proxy to add a basic authentication to the ipfs api
+  auth: false
+  # a map of the users with their password. Only used with auth is true
+  users: {}
+  # resources allocated to the proxy
+  resources:
+    requests:
+      memory: 64Mi
+      cpu: 10m
 cluster:
   enabled: true
   # cluster secret, automatically generated if null

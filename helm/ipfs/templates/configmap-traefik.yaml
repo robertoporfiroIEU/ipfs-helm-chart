@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ipfs.fullname" . }}-traefik
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs
+data:
+  traefik.yaml: |-
+    global:
+      sendAnonymousUsage: false
+    providers:
+      file:
+        directory: /etc/traefik/
+        watch: true
+    entryPoints:
+      web:
+        address: ":6001"
+        {{- if .Values.api.auth }}
+        http:
+          middlewares:
+            - basic-auth
+        {{- end}}
+    log:
+      level: INFO
+{{- if .Values.api.auth }}
+  auth.yaml: |-
+    http:
+      middlewares:
+        basic-auth:
+          basicAuth:
+            users:
+              {{- range $k, $v := .Values.api.users }}
+              - {{ htpasswd $k $v | quote }}
+              {{- end }}
+{{- end }}
+  api.yaml: |-
+    http:
+      routers:
+        api:
+          rule: 'PathPrefix(`/api`)'
+          service: "ipfs"
+      services:
+        ipfs:
+          loadBalancer:
+            servers:
+              {{- if .Values.cluster.enabled }}
+              - url: "http://localhost:9095"
+              {{- else }}
+              - url: "http://localhost:5001"
+              {{- end }}
