@@ -43,11 +43,20 @@ serviceAccount:
 networkPolicy:
   enabled: true
 ingress:
+  # activate gateway ingress
+  # for backward compatibility. Please activate each ingress explicitly
+  enabled: false
+  # host name to use for all the ingresses
+  # host:
+  annotations:
+    kubernetes.io/tls-acme: "true"
   gateway:
     enabled: false
-    annotations:
-      kubernetes.io/tls-acme: "true"
-    host: ""
+    # annotations may be specified here just for the gateway
+    # annotations:
+    #   kubernetes.io/tls-acme: "true"
+    # host name may be specified here just for the gateway
+    # host:
     from:
       - podSelector: {}
         namespaceSelector:
@@ -55,9 +64,11 @@ ingress:
             name: ingress
   api:
     enabled: false
-    annotations:
-      kubernetes.io/tls-acme: "true"
-    host: ""
+    # annotations may be specified here just for the api
+    # annotations:
+    #   kubernetes.io/tls-acme: "true"
+    # host name may be specified here just for the gateway
+    # host:
     from:
       - podSelector: {}
         namespaceSelector:

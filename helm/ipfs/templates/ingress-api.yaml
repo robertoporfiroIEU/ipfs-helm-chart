@@ -7,17 +7,17 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-  {{- with .Values.ingress.api.annotations }}
+  {{- with (default .Values.ingress.annotations .Values.ingress.api.annotations) }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   tls:
     - hosts:
-        - {{ .Values.ingress.api.host | quote }}
+        - {{ .Values.ingress.api.host | default .Values.ingress.host | required "please provide a hostname for the ingress" | quote }}
       secretName: {{ $fullName }}-tls
   rules:
-    - host: {{ .Values.ingress.api.host | quote }}
+    - host: {{ .Values.ingress.api.host | default .Values.ingress.host | quote }}
       http:
         paths:
           - path: /api
