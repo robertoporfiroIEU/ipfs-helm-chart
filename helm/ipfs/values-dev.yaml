@@ -24,7 +24,8 @@ metrics:
   enabled: true
 global:
   dev: true
-api:
+apiProxy:
+  enabled: true
   auth: true
   users:
     foo: bar
