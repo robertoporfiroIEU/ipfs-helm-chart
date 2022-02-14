@@ -51,4 +51,31 @@ spec:
     matchNames:
       - {{ .Release.Namespace }}
 {{- end }}
+{{- if .Values.cluster.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "ipfs.fullname" . }}-api-proxy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs
+spec:
+  selector:
+    matchLabels:
+      {{- include "ipfs.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ipfs
+  endpoints:
+    - port: proxy-metrics
+      {{- if .Values.metrics.interval }}
+      interval: {{ .Values.metrics.interval }}
+      {{- end }}
+      {{- if .Values.metrics.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.metrics.scrapeTimeout }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}
 {{- end }}

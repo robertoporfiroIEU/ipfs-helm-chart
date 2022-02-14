@@ -23,8 +23,18 @@ data:
           middlewares:
             - basic-auth
         {{- end}}
+      {{- if .Values.metrics.enabled }}
+      metrics:
+        address: :6002
+      {{- end }}
     log:
       level: INFO
+    {{- if .Values.metrics.enabled }}
+    metrics:
+      prometheus:
+        entryPoint: metrics
+        addRoutersLabels: true
+    {{- end }}
 {{- if .Values.apiProxy.auth }}
   auth.yaml: |-
     http:
@@ -41,7 +51,7 @@ data:
       routers:
         {{- if .Values.apiProxy.explicitEndpoints }}
         {{- range $endpoint := .Values.apiProxy.endpoints }}
-        {{ regexReplaceAll "\\W+" ($endpoint) "-" }}:
+        {{ $endpoint }}:
           rule: 'PathPrefix(`{{ $endpoint }}`)'
           service: "ipfs"
         {{- end }}

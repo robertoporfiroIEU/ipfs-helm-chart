@@ -12,11 +12,19 @@ spec:
       protocol: TCP
       name: metrics
       targetPort: api
-    {{- if and .Values.cluster.enabled .Values.metrics.enabled }}
+    {{- if .Values.metrics.enabled }}
+    {{- if .Values.cluster.enabled }}
     - port: 8888
       protocol: TCP
       name: cluster-metrics
       targetPort: cluster-metrics
+    {{- end }}
+    {{- if .Values.apiProxy.enabled }}
+    - port: 6002
+      protocol: TCP
+      name: proxy-metrics
+      targetPort: proxy-metrics
+    {{- end }}
     {{- end }}
   clusterIP: None
   selector:

@@ -126,6 +126,11 @@ spec:
             - name: api-proxy
               containerPort: 6001
               protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: proxy-metrics
+              containerPort: 6002
+              protocol: TCP
+            {{- end }}
           livenessProbe:
             tcpSocket:
               port: api-proxy
