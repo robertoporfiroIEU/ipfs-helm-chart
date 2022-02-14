@@ -29,3 +29,11 @@ apiProxy:
   auth: true
   users:
     foo: bar
+  explicitEndpoints: true
+  endpoints:
+    - /api/v0/pin/add
+    - /api/v0/pin/ls
+    - /api/v0/pin/verify
+    - /api/v0/add
+    - /api/v0/get
+    - /api/v0/ls

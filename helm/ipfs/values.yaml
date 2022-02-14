@@ -58,6 +58,10 @@ apiProxy:
   auth: false
   # a map of the users with their password. Only used with auth is true
   users: {}
+  # restrict the available endpoints
+  explicitEndpoints: false
+  # the list of available endpoints
+  endpoints: []
   # resources allocated to the proxy
   resources:
     requests:

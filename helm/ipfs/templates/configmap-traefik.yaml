@@ -39,9 +39,17 @@ data:
   api.yaml: |-
     http:
       routers:
+        {{- if .Values.apiProxy.explicitEndpoints }}
+        {{- range $endpoint := .Values.apiProxy.endpoints }}
+        {{ regexReplaceAll "\\W+" ($endpoint) "-" }}:
+          rule: 'PathPrefix(`{{ $endpoint }}`)'
+          service: "ipfs"
+        {{- end }}
+        {{- else }}
         api:
           rule: 'PathPrefix(`/api`)'
           service: "ipfs"
+        {{- end }}
       services:
         ipfs:
           loadBalancer:
