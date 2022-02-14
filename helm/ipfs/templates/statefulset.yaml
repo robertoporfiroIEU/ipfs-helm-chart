@@ -120,7 +120,7 @@ spec:
         {{- end }}
         {{- if .Values.api.auth }}
         - name: api-proxy
-          image: traefik:2.6.0
+          image: traefik:2.6
           imagePullPolicy: IfNotPresent
           ports:
             - name: api-proxy
