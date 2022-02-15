@@ -2,8 +2,13 @@ helm charts for ipfs
 
 # Usage
 
+## From command line
 
-##
+~~~bash
+helm repo add ipfs https://gitlab.com/api/v4/projects/31977935/packages/helm/dev
+helm search repo ipfs --devel
+helm install ipfs/ipfs ipfs
+~~~
 
 ## As a dependency in your `Chart.yaml`
 
