@@ -1,10 +1,18 @@
 stages:
   - helm
 
-helm-dapp:
+helm-oci:
   stage: helm
-  image: registry.gitlab.com/xdev-tech/build/helm:develop
+  image: registry.gitlab.com/xdev-tech/build/helm:2.1
   script:
     - helm registry login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - helm dependency update ./helm/ipfs
-    - sh -x /usr/local/bin/build $CI_REGISTRY_IMAGE/helm/ipfs ./helm/ipfs NO_PATCH
+    - build $CI_REGISTRY_IMAGE/helm/ipfs ./helm/ipfs NO_PATCH
+
+helm-std:
+  stage: helm
+  image: registry.gitlab.com/xdev-tech/build/helm:2.1
+  script:
+    - helm registry login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - helm dependency update ./helm/ipfs
+    - build_std $CI_REGISTRY_IMAGE/helm/ipfs ./helm/ipfs NO_PATCH

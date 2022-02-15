@@ -18,7 +18,7 @@ k8s_yaml(
 )
 
 local_resource('helm lint',
-               'docker run --rm -t -v $PWD:/app registry.gitlab.com/xdev-tech/build/helm:2.0' +
+               'docker run --rm -t -v $PWD:/app registry.gitlab.com/xdev-tech/build/helm:2.1' +
                ' lint helm/ipfs --values helm/ipfs/values-dev.yaml',
                'helm/ipfs/', allow_parallel=True)
 

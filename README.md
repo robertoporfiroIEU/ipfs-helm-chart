@@ -2,7 +2,10 @@ helm charts for ipfs
 
 # Usage
 
-As a dependency in your `Chart.yaml`:
+
+##
+
+## As a dependency in your `Chart.yaml`
 
 ~~~yaml
 dependencies:
