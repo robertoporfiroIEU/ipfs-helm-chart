@@ -1,37 +1,71 @@
+## String to partially override aspnet-core.fullname template (will maintain the release name)
 nameOverride: ""
+
+## String to fully override aspnet-core.fullname template
 fullnameOverride: ""
+
+## The numbre of ipfs nodes to run. Use this number instead of scaling the stateful set after
+## the installation, because so resources (swarm services mostly) are only scaled with this value
 replicas: 1
+
+## ipfs image configuration
 image:
   repository: ipfs/go-ipfs
   pullPolicy: IfNotPresent
   # tag: v0.10.0
+
+## Log level of the ipfs node
 log:
   level: INFO
+
+## ipfs persistence configuration
+##
 persistence:
+  ## PVC Storage Class for ipfs storage
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
   storageClass: ""
+  ## PVC Access Mode
   accessModes:
     - ReadWriteOnce
+  ## PVC Storage Request for PostgreSQL volume
   size: 1Gi
+
+## ipfs services configuration
 service:
+  ## ipfs swarm services configurations. The number of entries must match the number of replicas,
+  ## as one swarm service is created for each replica in order to expose the swarm port outside
+  ## the cluster
   swarm:
-    # number of entries must match the number of replicas
     - type: ClusterIP
       port: 4001
       ipAddress: null
+  ## ipfs api service configuration. Note that the api may be exposed through an ingress.
   api:
     type: ClusterIP
     port: 5001
     ipAddress: null
+  ## ipfs gateway service configuration. Note that the gateway may be exposed through an ingress.
   gateway:
     type: ClusterIP
     port: 8080
     ipAddress: null
+
+## ipfs container resources
 resources:
+  # limits: {}
   requests:
     memory: 400Mi
     cpu: 100m
+
+## Affinity for ipfs pods assignment
 affinity: {}
+
+# Tolerations for ipfs pods assignment
 tolerations: {}
+
+## Service account for ipfs to use.
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -40,8 +74,12 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+# Add networkpolicies
 networkPolicy:
   enabled: true
+
+## Ingress configuration
 ingress:
   # activate gateway ingress
   # for backward compatibility. Please activate each ingress explicitly
@@ -88,6 +126,7 @@ ingress:
     # tls secret name
     # secretName:
 
+## Use a proxy in front of ipfs api
 apiProxy:
   enabled: false
   # use a reverse proxy to add a basic authentication to the ipfs api
@@ -100,9 +139,12 @@ apiProxy:
   endpoints: []
   # resources allocated to the proxy
   resources:
+    # limits: {}
     requests:
       memory: 64Mi
       cpu: 10m
+
+## Use ipfs cluster
 cluster:
   enabled: true
   # cluster secret, automatically generated if null
@@ -127,26 +169,32 @@ cluster:
     accessModes:
       - ReadWriteOnce
     size: 1Gi
+  ## ipfs cluster services configuration
   service:
+    ## ipfs cluster swarm configuration. Not to be confused with ipfs swarm service
     swarm:
       type: ClusterIP
       port: 9096
       ipAddress: null
+    ## ipfs cluster api configuration. Not to be confused with ipfs api service
     api:
       type: ClusterIP
       port: 9094
       ipAddress: null
+    ## ipfs cluster proxy configuration
     proxy:
       type: ClusterIP
       port: 9095
       ipAddress: null
+  ## ipfs cluster resources requests and limits
   resources:
+    # limits: {}
     requests:
       memory: 250Mi
       cpu: 100m
+
+## activate metric collection through prometheus ServiceMonitor resources
 metrics:
   enabled: false
   interval:
   scrapeTimeout:
-global:
-  dev: false
