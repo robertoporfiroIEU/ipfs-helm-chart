@@ -9,7 +9,7 @@ metadata:
 data:
   start_ipfs: |-
     #!/bin/sh
-    set -e
+    set -ex
     user=ipfs
     repo="$IPFS_PATH"
 
@@ -68,6 +68,10 @@ data:
     {{- else }}
     # make the api reachable from outside the pod
     ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
+    {{- end }}
+
+    {{- range $k, $v := .Values.configuration }}
+    ipfs config --json {{ $k | quote }} {{ $v | toJson | quote }}
     {{- end }}
 
     if [ ! -z "$(IPFS_ADDRESS_ANNOUNCE_$HOSTNAME)" ] ; then

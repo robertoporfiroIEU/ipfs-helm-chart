@@ -18,6 +18,13 @@ image:
 log:
   level: INFO
 
+## Extra configuration to pass to ipfs
+## The configuration is expressed in yaml and passed in a command `ipfs config --json`.
+## Note that the values that are set here are restored back to there default value when
+## removed. You have to explicitly set them to the expected value
+configuration: {}
+#   Datastore.StorageMax: 10GB
+
 ## ipfs persistence configuration
 ##
 persistence:

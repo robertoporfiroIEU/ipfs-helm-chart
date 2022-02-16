@@ -1,3 +1,5 @@
+configuration:
+  Datastore.StorageMax: 1GB
 ingress:
   host: "ipfs.localhost"
   gateway:
