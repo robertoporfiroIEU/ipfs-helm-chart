@@ -14,14 +14,14 @@ spec:
       app.kubernetes.io/component: ipfs
   ingress:
     - from:
-      - podSelector:
-          matchLabels:
-            {{ include "ipfs.fullname" . }}-client: "true"
-      # allow communication between the pods of this chart, when replicas is greater than 1
-      - podSelector:
-          matchLabels:
-            {{- include "ipfs.selectorLabels" . | nindent 12 }}
-            app.kubernetes.io/component: ipfs
-      {{- .Values.ingress.api.from | default .Values.ingress.from | toYaml | nindent 6 }}
-      {{- .Values.ingress.gateway.from | default .Values.ingress.from | toYaml | nindent 6 }}
+        - podSelector:
+            matchLabels:
+              {{ include "ipfs.fullname" . }}-client: "true"
+        # allow communication between the pods of this chart, when replicas is greater than 1
+        - podSelector:
+            matchLabels:
+              {{- include "ipfs.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: ipfs
+        {{- .Values.ingress.api.from | default .Values.ingress.from | toYaml | nindent 8 }}
+        {{- .Values.ingress.gateway.from | default .Values.ingress.from | toYaml | nindent 8 }}
 {{- end }}

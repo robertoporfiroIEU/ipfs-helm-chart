@@ -65,7 +65,7 @@ data:
     {{- if or .Values.cluster.enabled .Values.apiProxy.enabled }}
     # make the api reachable only from inside the pod
     ipfs config Addresses.API /ip4/127.0.0.1/tcp/5001
-    {{ else }}
+    {{- else }}
     # make the api reachable from outside the pod
     ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
     {{- end }}
