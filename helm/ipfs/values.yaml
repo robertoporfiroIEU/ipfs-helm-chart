@@ -66,6 +66,9 @@ resources:
     memory: 400Mi
     cpu: 100m
 
+## annotations added to the pods
+podAnnotations: {}
+
 ## Affinity for ipfs pods assignment
 affinity: {}
 

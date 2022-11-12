@@ -20,6 +20,10 @@ spec:
       labels:
         {{- include "ipfs.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: ipfs
+    {{- with .Values.podAnnotations }}
+    annotations:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     spec:
       serviceAccountName: {{ include "ipfs.serviceAccountName" . }}
       containers:
