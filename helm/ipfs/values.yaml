@@ -164,7 +164,7 @@ cluster:
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent
-    tag: v0.14.2
+    tag: 1.0.5
   # extra configuration to pass to ipfs-cluster.
   # cluster.secret and restapi.basic_auth_credentials are sensitive values that
   # shouldn't be stored in this map
