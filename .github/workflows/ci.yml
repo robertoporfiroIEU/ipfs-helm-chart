@@ -42,3 +42,24 @@ jobs:
           --secret registry_password=${{ github.token }} \
           ./helm+publish \
           --tag=$TAG
+    - name: Generate job summary
+      run: |
+        cat <<"EOF" >> $GITHUB_STEP_SUMMARY
+        ## Helm package
+        Helm package was generated with tag `${{ env.TAG }}`
+
+        Use it directly with
+
+        ~~~bash
+        helm install ipfs oci://ghcr.io/eniblock/ipfs --version ${{ env.TAG }}
+        ~~~
+
+        or as a helm dependency in your `Chart.yaml`:
+
+        ~~~yaml
+        dependencies:
+          - name: ipfs
+            version: "${{ env.TAG }}"
+            repository: "oci://ghcr.io/eniblock"
+        ~~~
+        EOF

@@ -5,9 +5,7 @@ helm charts for ipfs
 ## From command line
 
 ~~~bash
-helm repo add ipfs https://gitlab.com/api/v4/projects/31977935/packages/helm/dev
-helm search repo ipfs --devel
-helm install ipfs/ipfs ipfs
+helm install oci://ghcr.io/eniblock/ipfs --version 0.1.0
 ~~~
 
 ## As a dependency in your `Chart.yaml`
@@ -15,8 +13,8 @@ helm install ipfs/ipfs ipfs
 ~~~yaml
 dependencies:
   - name: ipfs
-    version: "0.1.0-develop"
-    repository: oci://registry.gitlab.com/xdev-tech/xdev-enterprise-business-network/ipfs/helm
+    repository: oci://ghcr.io/eniblock/ipfs
+    version: "0.1.0"
 ~~~
 
 # Development
