@@ -1,0 +1,44 @@
+name: ci
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "*"
+
+env:
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  HELM_DIR: ./helm/ipfs
+
+jobs:
+
+  ############################ tests ############################
+
+  lint-helm:
+    runs-on: [self-hosted]
+    steps:
+    - uses: eniblock/build/actions/setup@4.1
+    - run: earthly ./helm+lint
+
+  ############################ docker ############################
+
+  docker:
+    runs-on: [self-hosted]
+    needs: [lint-helm]
+    steps:
+    - uses: eniblock/build/actions/setup@4.1
+    - run: earthly +docker --tag=$TAG
+
+  ############################ helm ############################
+
+  helm-publish:
+    runs-on: [self-hosted]
+    needs: [docker]
+    steps:
+    - uses: eniblock/build/actions/setup@4.1
+    - name: Build/Publish the helm charts
+      run: |
+        earthly \
+          --secret registry_password=${{ github.token }} \
+          ./helm+publish \
+          --tag=$TAG
