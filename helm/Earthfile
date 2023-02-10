@@ -17,7 +17,7 @@ lint:
 build:
     FROM +deps
     ARG tag=0.1.0-local
-    DO helm+BUILD --helmdir=./ipfs --tag=${tag}
+    DO helm+BUILD --helmdir=./ipfs --patch_app_version=false --tag=${tag}
     SAVE ARTIFACT /app/*-${tag}.tgz
 
 save-package:
