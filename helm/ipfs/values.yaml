@@ -19,6 +19,7 @@ log:
   level: INFO
 
 ## private network configuration
+## use configuration.Bootstrap to configure the bootstrap nodes
 privateNetwork:
   ## configure ipfs node in private network mode
   enabled: false
