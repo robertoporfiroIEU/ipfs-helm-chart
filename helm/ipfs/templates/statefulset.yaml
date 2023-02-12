@@ -48,7 +48,7 @@ spec:
               value: {{ .Values.log.level }}
             {{- range $i, $n := until (int .Values.replicas) }}
             {{- if (index $.Values.service.swarm $i).ipAddress }}
-            - name: IPFS_ADDRESS_ANNOUNCE_{{ include "ipfs.fullname" . }}-{{ $i }}
+            - name: IPFS_ADDRESS_ANNOUNCE_ipfs_{{ $i }}
               value: /ip4/{{ (index $.Values.service.swarm $i).ipAddress }}/tcp/{{ (index $.Values.service.swarm $i).port }}
             {{- end }}
             {{- end }}

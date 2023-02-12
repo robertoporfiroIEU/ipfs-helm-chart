@@ -74,8 +74,10 @@ data:
     ipfs config --json {{ $k | quote }} {{ $v | toJson | quote }}
     {{- end }}
 
-    if [ ! -z "$(IPFS_ADDRESS_ANNOUNCE_$HOSTNAME)" ] ; then
-        ipfs config --json Addresses.Announce "[\"$IPFS_ADDRESS_ANNOUNCE\"]"
+    uhostname=$(echo $HOSTNAME | tr '-' '_')
+    eval "aa=\$IPFS_ADDRESS_ANNOUNCE_$uhostname"
+    if [ ! -z "$aa" ] ; then
+        ipfs config --json Addresses.Announce "[\"$aa\"]"
     fi
 
     exec ipfs "$@"
