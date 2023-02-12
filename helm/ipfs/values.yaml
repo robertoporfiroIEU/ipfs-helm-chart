@@ -163,7 +163,7 @@ apiProxy:
 
 ## Use ipfs cluster
 cluster:
-  enabled: true
+  enabled: false
   # cluster secret, automatically generated if null
   secret: null
   # rest api credentials, not used if null
