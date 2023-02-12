@@ -80,6 +80,14 @@ data:
         ipfs config --json Addresses.Announce "[\"$aa\"]"
     fi
 
+    if [ ! -z "$LIBP2P_FORCE_PNET" ] ; then
+        ipfs bootstrap rm --all
+        if [ "$HOSTNAME" != "ipfs-0" ] ; then
+            peer_id=`ipfs --api /dns4/ipfs-0.ipfs/tcp/5001 id -f '<id>'`
+            ipfs bootstrap add /dns4/ipfs-0.ipfs/tcp/4001/p2p/$peer_id
+        fi
+    fi
+
     exec ipfs "$@"
   start_ipfs_cluster: |-
     #!/bin/sh

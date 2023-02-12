@@ -16,7 +16,7 @@ k8s_yaml(
         name='ipfs',
     )
 )
-
+k8s_resource('ipfs', port_forwards=['5001:5001'])
 local_resource('helm lint',
                'docker run --rm -t -v $PWD:/app registry.gitlab.com/xdev-tech/build/helm:2.1' +
                ' lint helm/ipfs --values helm/ipfs/values-dev.yaml',

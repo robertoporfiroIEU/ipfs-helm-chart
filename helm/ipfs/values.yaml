@@ -18,6 +18,13 @@ image:
 log:
   level: INFO
 
+## private network configuration
+privateNetwork:
+  ## configure ipfs node in private network mode
+  enabled: false
+  ## swarm key to use for the private network. Automatically generated if null
+  swarmKey: null
+
 ## Extra configuration to pass to ipfs
 ## The configuration is expressed in yaml and passed in a command `ipfs config --json`.
 ## Note that the values that are set here are restored back to there default value when

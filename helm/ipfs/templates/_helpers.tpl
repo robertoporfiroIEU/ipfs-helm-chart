@@ -87,3 +87,29 @@ Parameter: [$, Secret name, [Secret key 1, Secret key 2, ...]]
   {{ $key }}: {{ $reduced_list | join "" | trunc $secretLength | b64enc | quote }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create a swarm key
+Parameter: [$, Secret name, [Secret key 1, Secret key 2, ...]]
+*/}}
+{{- define "ipfs.automaticSwarmKey" -}}
+{{- $ := index . 0 -}}
+{{- $name := index . 1 -}}
+{{- $key := index . 2 -}}
+{{- $userValue := index . 3 }}
+{{- if $userValue }}
+  {{ $key }}: {{ $userValue | b64enc | quote }}
+{{- else if ($.Values.global).dev }}
+  {{- $bs := printf "%s-%s" $name . | sha256sum -}}
+  {{- $more_string := printf "%s%s%s%s%s%s%s%s%s%s" $bs $bs $bs $bs $bs $bs $bs $bs $bs $bs }}
+  {{- $rand_list := $more_string | b32enc | lower | splitList "" -}}
+  {{- $reduced_list := without $rand_list "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" "=" }}
+  {{ $key }}: {{ printf "/key/swarm/psk/1.0.0/\n/base16/\n%s" ($reduced_list | join "" | trunc 64) | b64enc | quote }}
+{{- else if and ($.Release.IsUpgrade) (lookup "v1" "Secret" $.Release.Namespace $name) }}
+  {{ $key }}: {{ index (lookup "v1" "Secret" $.Release.Namespace $name).data $key }}
+{{- else }}
+  {{- $rand_list := randAlphaNum 1000 | splitList "" -}}
+  {{- $reduced_list := without $rand_list "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" }}
+  {{ $key }}: {{ printf "/key/swarm/psk/1.0.0/\n/base16/\n%s" ($reduced_list | join "" | trunc 64) | b64enc | quote }}
+{{- end }}
+{{- end }}

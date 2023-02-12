@@ -46,6 +46,15 @@ spec:
           env:
             - name: IPFS_LOGGING
               value: {{ .Values.log.level }}
+            {{- if .Values.privateNetwork.enabled }}
+            - name: LIBP2P_FORCE_PNET
+              value: "1"
+            - name: IPFS_SWARM_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ipfs.fullname" . }}
+                  key: swarm-key
+            {{- end }}
             {{- range $i, $n := until (int .Values.replicas) }}
             {{- if (index $.Values.service.swarm $i).ipAddress }}
             - name: IPFS_ADDRESS_ANNOUNCE_ipfs_{{ $i }}
