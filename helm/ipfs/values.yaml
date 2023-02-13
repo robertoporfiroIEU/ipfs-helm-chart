@@ -18,6 +18,17 @@ image:
 log:
   level: INFO
 
+## ipfs initialization configuration
+init: {}
+  ## configure the profiles to use for the ipfs node. See https://github.com/ipfs/kubo/blob/master/docs/config.md#profiles
+  # profiles: []
+  ## Cryptographic algorithm to use for key generation
+  # algorithm: ed25519
+  ## Number of bits to use in the generated RSA private key
+  # bits: 2048
+  ## Don't add and pin help files to the local storage
+  # emptyRepo: false
+
 ## private network configuration
 ## use configuration.Bootstrap to configure the bootstrap nodes
 privateNetwork:
@@ -28,7 +39,7 @@ privateNetwork:
 
 ## Extra configuration to pass to ipfs
 ## The configuration is expressed in yaml and passed in a command `ipfs config --json`.
-## Note that the values that are set here are restored back to there default value when
+## Note that the values that are set here are not restored back to there default value when
 ## removed. You have to explicitly set them to the expected value
 configuration: {}
 #   Datastore.StorageMax: 10GB

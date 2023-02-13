@@ -33,6 +33,18 @@ spec:
           args:
             - daemon
             - --migrate=true
+            {{- if .Values.init.profiles }}
+            - --profile={{ .Values.init.profiles | join "," }}
+            {{- end }}
+            {{- if .Values.init.algorithm }}
+            - --algorithm={{ .Values.init.argorithm }}
+            {{- end }}
+            {{- if .Values.init.bits }}
+            - --bits={{ .Values.init.bits }}
+            {{- end }}
+            {{- if not (kindIs "invalid" .Values.init.emptyRepo) }}
+            - --empty-repo={{ .Values.init.emptyRepo }}
+            {{- end }}
           ports:
             - name: swarm
               containerPort: 4001
