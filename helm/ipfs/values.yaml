@@ -6,13 +6,13 @@ fullnameOverride: ""
 
 ## The numbre of ipfs nodes to run. Use this number instead of scaling the stateful set after
 ## the installation, because so resources (swarm services mostly) are only scaled with this value
-replicas: 1
+replicas: 3
 
 ## ipfs image configuration
 image:
   repository: ipfs/go-ipfs
   pullPolicy: IfNotPresent
-  # tag: v0.10.0
+  tag: v0.31.0
 
 ## Log level of the ipfs node
 log:
@@ -33,7 +33,7 @@ init: {}
 ## use configuration.Bootstrap to configure the bootstrap nodes
 privateNetwork:
   ## configure ipfs node in private network mode
-  enabled: false
+  enabled: true
   ## swarm key to use for the private network. Automatically generated if null
   swarmKey: null
 
@@ -114,9 +114,9 @@ ingress:
   # for backward compatibility. Please activate each ingress explicitly
   enabled: false
   # host name to use for all the ingresses
-  # host:
-  annotations:
-    kubernetes.io/tls-acme: "true"
+  host: "ipfs.localhost"
+  #annotations:
+  #  kubernetes.io/tls-acme: "true"
   # tls secret name for all the ingresses
   # secretName:
   from:
@@ -175,7 +175,7 @@ apiProxy:
 
 ## Use ipfs cluster
 cluster:
-  enabled: false
+  enabled: true
   # cluster secret, automatically generated if null
   secret: null
   # rest api credentials, not used if null
@@ -183,7 +183,7 @@ cluster:
   image:
     repository: ipfs/ipfs-cluster
     pullPolicy: IfNotPresent
-    tag: 1.0.5
+    tag: v1.1.1
   # extra configuration to pass to ipfs-cluster.
   # cluster.secret and restapi.basic_auth_credentials are sensitive values that
   # shouldn't be stored in this map

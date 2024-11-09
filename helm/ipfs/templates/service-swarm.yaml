@@ -1,4 +1,5 @@
 {{- range $i, $n := until (int .Values.replicas) }}
+{{- if lt $i (len $.Values.service.swarm) }}
 ---
 apiVersion: v1
 kind: Service
@@ -24,4 +25,5 @@ spec:
     {{- if ne (int $.Values.replicas) 1 }}
     statefulset.kubernetes.io/pod-name: {{ include "ipfs.fullname" $ }}-{{ $i }}
     {{- end }}
+{{- end }}
 {{- end }}

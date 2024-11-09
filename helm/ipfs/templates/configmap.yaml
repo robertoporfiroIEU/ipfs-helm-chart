@@ -13,12 +13,12 @@ data:
     user=ipfs
     repo="$IPFS_PATH"
 
-    if [ `id -u` -eq 0 ]; then
+    if [ "$(id -u)" -eq 0 ]; then
         echo "Changing user to $user"
         # ensure folder is writable
-        su-exec "$user" test -w "$repo" || chown -R -- "$user" "$repo"
+        gosu "$user" test -w "$repo" || chown -R -- "$user" "$repo"
         # restart script with new privileges
-        exec su-exec "$user" "$0" "$@"
+        exec gosu "$user" "$0" "$@"
     fi
 
     # 2nd invocation with regular user
@@ -58,7 +58,7 @@ data:
 
     fi
 
-    {{- if or .Values.cluster.enabled .Values.apiProxy.enabled }}
+    {{- if .Values.apiProxy.enabled }}
     # make the api reachable only from inside the pod
     ipfs config Addresses.API /ip4/127.0.0.1/tcp/5001
     {{- else }}
@@ -76,9 +76,12 @@ data:
         ipfs config --json Addresses.Announce "[\"$aa\"]"
     fi
 
-    if [ ! -z "$LIBP2P_FORCE_PNET" ] ; then
-        ipfs bootstrap rm --all
-    fi
+    #if [ ! -z "$LIBP2P_FORCE_PNET" ] ; then
+    ipfs bootstrap rm --all
+    ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"*\"]"
+    ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["GET", "PUT", "POST"]'
+    #fi
+    
     if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-0" ] ; then
         peer_id=`ipfs --api /dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}/tcp/5001 id -f '<id>'`
         ipfs bootstrap add /dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}/tcp/4001/p2p/$peer_id
@@ -110,7 +113,8 @@ data:
     else
         echo "This container only runs ipfs-cluster-service. ipfs needs to be run separately!"
         echo "Initializing default configuration..."
-        ipfs-cluster-service init --consensus "${IPFS_CLUSTER_CONSENSUS}" --datastore "${IPFS_CLUSTER_DATASTORE}"
+        #ipfs-cluster-service init --consensus "${IPFS_CLUSTER_CONSENSUS}" --datastore "${IPFS_CLUSTER_DATASTORE}"
+        ipfs-cluster-service init
         # configure the bootstrap option for all the nodes except node 0
         if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-0" ]; then
             base_addr=/dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local

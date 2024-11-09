@@ -28,11 +28,10 @@ spec:
       serviceAccountName: {{ include "ipfs.serviceAccountName" . }}
       containers:
         - name: ipfs
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - daemon
-            - --migrate=true
           ports:
             - name: swarm
               containerPort: 4001
@@ -45,12 +44,12 @@ spec:
               protocol: TCP
           env:
             - name: INIT_ARGS
-              value: "{{- if .Values.init.profiles }}--profile={{ .Values.init.profiles | join "," }}{{- end }}{{- if .Values.init.algorithm }} --algorithm={{ .Values.init.argorithm }}{{- end }}{{- if .Values.init.bits }} --bits={{ .Values.init.bits }}{{- end }}{{- if not (kindIs "invalid" .Values.init.emptyRepo) }} --empty-repo={{ .Values.init.emptyRepo }}{{- end }}"
+              value: "{{- if .Values.init.profiles }}--profile={{ .Values.init.profiles | join "," }}{{- end }}{{- if .Values.init.algorithm }} --algorithm={{ .Values.init.algorithm }}{{- end }}{{- if .Values.init.bits }} --bits={{ .Values.init.bits }}{{- end }}{{- if not (kindIs "invalid" .Values.init.emptyRepo) }} --empty-repo={{ .Values.init.emptyRepo }}{{- end }}"
             - name: IPFS_LOGGING
               value: {{ .Values.log.level }}
             {{- if .Values.privateNetwork.enabled }}
-            - name: LIBP2P_FORCE_PNET
-              value: "1"
+            #- name: LIBP2P_FORCE_PNET
+            #  value: "1"
             - name: IPFS_SWARM_KEY
               valueFrom:
                 secretKeyRef:
@@ -58,10 +57,12 @@ spec:
                   key: swarm-key
             {{- end }}
             {{- range $i, $n := until (int .Values.replicas) }}
-            {{- if (index $.Values.service.swarm $i).ipAddress }}
+              {{- if lt $i (len $.Values.service.swarm) }}
+                {{- if and (index $.Values.service.swarm $i) (index $.Values.service.swarm $i).ipAddress }}
             - name: IPFS_ADDRESS_ANNOUNCE_ipfs_{{ $i }}
               value: /ip4/{{ (index $.Values.service.swarm $i).ipAddress }}/tcp/{{ (index $.Values.service.swarm $i).port }}
-            {{- end }}
+                {{- end }}
+              {{- end }}
             {{- end }}
           livenessProbe:
             tcpSocket:

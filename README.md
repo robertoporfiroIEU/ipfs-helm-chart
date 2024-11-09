@@ -5,7 +5,7 @@ helm charts for ipfs
 ## From command line
 
 ~~~bash
-helm install oci://ghcr.io/eniblock/ipfs --version 0.1.0
+helm upgrade --install ipfs-cluster ./helm/ipfs/ --create-namespace --namespace ipfs-dev --values helm/ipfs/values.yaml
 ~~~
 
 ## As a dependency in your `Chart.yaml`
