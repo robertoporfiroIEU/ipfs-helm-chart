@@ -190,9 +190,9 @@ cluster:
   configuration:
     metrics:
       prometheus_endpoint: /ip4/0.0.0.0/tcp/8888
-  # cluster:
-  #   replication_factor_min: 2
-  #   consensus: raft
+  cluster:
+     replication_factor_min: 2
+     consensus: dht
   persistence:
     storageClass: ""
     accessModes:

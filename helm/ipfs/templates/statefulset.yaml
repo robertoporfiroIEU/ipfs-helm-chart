@@ -48,8 +48,8 @@ spec:
             - name: IPFS_LOGGING
               value: {{ .Values.log.level }}
             {{- if .Values.privateNetwork.enabled }}
-            #- name: LIBP2P_FORCE_PNET
-            #  value: "1"
+            - name: LIBP2P_FORCE_PNET
+              value: "1"
             - name: IPFS_SWARM_KEY
               valueFrom:
                 secretKeyRef:
@@ -80,7 +80,7 @@ spec:
               subPath: start_ipfs
         {{- if .Values.cluster.enabled }}
         - name: cluster
-          image: "{{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag }}"
           imagePullPolicy: IfNotPresent
           env:
             # Expose API
