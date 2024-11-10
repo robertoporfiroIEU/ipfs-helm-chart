@@ -76,18 +76,20 @@ data:
         ipfs config --json Addresses.Announce "[\"$aa\"]"
     fi
 
-    #if [ ! -z "$LIBP2P_FORCE_PNET" ] ; then
-    ipfs bootstrap rm --all
-    ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"*\"]"
-    ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["GET", "PUT", "POST"]'
-    #fi
+    if [ ! -z "$LIBP2P_FORCE_PNET" ] ; then
+        ipfs bootstrap rm --all
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"*\"]"
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["GET", "PUT", "POST"]'
+    fi
     
     if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-0" ] ; then
         peer_id=`ipfs --api /dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}/tcp/5001 id -f '<id>'`
         ipfs bootstrap add /dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}/tcp/4001/p2p/$peer_id
     fi
-
+    
+    # use the args (deamon) from statefulset.yaml file
     exec ipfs "$@"
+
   start_ipfs_cluster: |-
     #!/bin/sh
 
