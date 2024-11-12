@@ -21,7 +21,7 @@ log:
 ## ipfs initialization configuration
 init: {}
   ## configure the profiles to use for the ipfs node. See https://github.com/ipfs/kubo/blob/master/docs/config.md#profiles
-  # profiles: []
+  #profiles: local-discovery
   ## Cryptographic algorithm to use for key generation
   # algorithm: ed25519
   ## Number of bits to use in the generated RSA private key
@@ -41,8 +41,11 @@ privateNetwork:
 ## The configuration is expressed in yaml and passed in a command `ipfs config --json`.
 ## Note that the values that are set here are not restored back to there default value when
 ## removed. You have to explicitly set them to the expected value
-configuration: {}
-#   Datastore.StorageMax: 10GB
+configuration: 
+   Datastore.StorageMax: 10GB
+   Routing.Type: "dht"
+   Swarm.EnableRelayHop: true
+   Swarm.EnableAutoRelay: true
 
 ## ipfs persistence configuration
 ##
@@ -191,7 +194,8 @@ cluster:
     metrics:
       prometheus_endpoint: /ip4/0.0.0.0/tcp/8888
   cluster:
-     replication_factor_min: 2
+     #replication_factor_min: -1
+     #replication_factor_max: -1
      consensus: dht
   persistence:
     storageClass: ""

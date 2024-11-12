@@ -78,8 +78,9 @@ data:
 
     if [ ! -z "$LIBP2P_FORCE_PNET" ] ; then
         ipfs bootstrap rm --all
-        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[\"*\"]"
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
         ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["GET", "PUT", "POST"]'
+        ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '["X-Requested-With", "Range", "User-Agent"]'
     fi
     
     if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-0" ] ; then
