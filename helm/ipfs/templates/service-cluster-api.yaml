@@ -6,7 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: ipfs-cluster
 spec:
   type: {{ .Values.cluster.service.api.type }}
   ports:
@@ -19,5 +19,5 @@ spec:
   {{- end }}
   selector:
     {{- include "ipfs.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: ipfs-cluster
 {{- end }}

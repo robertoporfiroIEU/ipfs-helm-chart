@@ -1,0 +1,109 @@
+# IPFS Peer StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "ipfs.fullname" . }}-peer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs-peer
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.replicas }}
+  serviceName: {{ include "ipfs.fullname" . }}-peer
+  selector:
+    matchLabels:
+      {{- include "ipfs.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ipfs-peer
+  template:
+    metadata:
+      labels:
+        {{- include "ipfs.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: ipfs-peer
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "ipfs.serviceAccountName" . }}
+      containers:
+        - name: ipfs-peer
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - daemon
+          ports:
+            - name: swarm
+              containerPort: 4001
+              protocol: TCP
+            - name: api
+              containerPort: 5001
+              protocol: TCP
+            - name: gateway
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: INIT_ARGS
+              value: "{{- if .Values.init.profiles }}--profile={{ .Values.init.profiles | join "," }}{{- end }}{{- if .Values.init.algorithm }} --algorithm={{ .Values.init.algorithm }}{{- end }}{{- if .Values.init.bits }} --bits={{ .Values.init.bits }}{{- end }}{{- if not (kindIs "invalid" .Values.init.emptyRepo) }} --empty-repo={{ .Values.init.emptyRepo }}{{- end }}"
+            - name: IPFS_LOGGING
+              value: {{ .Values.log.level }}
+            {{- if .Values.privateNetwork.enabled }}
+            - name: LIBP2P_FORCE_PNET
+              value: "1"
+            - name: IPFS_SWARM_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ipfs.fullname" . }}
+                  key: swarm-key
+            {{- end }}
+            {{- range $i, $n := until (int .Values.replicas) }}
+              {{- if lt $i (len $.Values.service.swarm) }}
+                {{- if and (index $.Values.service.swarm $i) (index $.Values.service.swarm $i).ipAddress }}
+            - name: IPFS_ADDRESS_ANNOUNCE_ipfs_{{ $i }}
+              value: /ip4/{{ (index $.Values.service.swarm $i).ipAddress }}/tcp/{{ (index $.Values.service.swarm $i).port }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+          livenessProbe:
+            tcpSocket:
+              port: swarm
+          readinessProbe:
+            tcpSocket:
+              port: swarm
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: ipfs-storage
+              mountPath: /data/ipfs
+            - name: start-ipfs
+              mountPath: /usr/local/bin/start_ipfs
+              subPath: start_ipfs
+      volumes:
+        - name: start-ipfs
+          configMap:
+            name: {{ include "ipfs.fullname" . }}-peer
+            items:
+              - key: start_ipfs
+                path: start_ipfs
+                mode: 0555
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: ipfs-storage
+      spec:
+        accessModes:
+          {{- .Values.persistence.accessModes | toYaml | nindent 10 }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+        {{- if .Values.persistence.storageClass }}
+        storageClassName: {{ .Values.persistence.storageClass }}
+        {{- end }}

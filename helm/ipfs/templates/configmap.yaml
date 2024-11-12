@@ -1,11 +1,12 @@
+# ConfigMap for IPFS peer
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "ipfs.fullname" . }}
+  name: {{ include "ipfs.fullname" . }}-peer
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: ipfs-peer
 data:
   start_ipfs: |-
     #!/bin/sh
@@ -60,7 +61,7 @@ data:
 
     {{- if .Values.apiProxy.enabled }}
     # make the api reachable only from inside the pod
-    ipfs config Addresses.API /ip4/127.0.0.1/tcp/5001
+    ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
     {{- else }}
     # make the api reachable from outside the pod
     ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
@@ -83,14 +84,26 @@ data:
         ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '["X-Requested-With", "Range", "User-Agent"]'
     fi
     
-    if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-0" ] ; then
-        peer_id=`ipfs --api /dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}/tcp/5001 id -f '<id>'`
-        ipfs bootstrap add /dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}/tcp/4001/p2p/$peer_id
+    if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-peer-0" ] ; then
+        peer_id=`ipfs --api /dns4/{{ include "ipfs.fullname" . }}-peer-0.{{ include "ipfs.fullname" . }}-peer/tcp/5001 id -f '<id>'`
+        ipfs bootstrap add /dns4/{{ include "ipfs.fullname" . }}-peer-0.{{ include "ipfs.fullname" . }}-peer/tcp/4001/p2p/$peer_id
     fi
     
     # use the args (deamon) from statefulset.yaml file
     exec ipfs "$@"
 
+---
+# ConfigMap for IPFS cluster
+{{- if .Values.cluster.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ipfs.fullname" . }}-cluster
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs-cluster
+data:
   start_ipfs_cluster: |-
     #!/bin/sh
 
@@ -119,8 +132,8 @@ data:
         ipfs-cluster-service init
         
         # configure the bootstrap option for all the nodes except node 0
-        if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-0" ]; then
-            base_addr=/dns4/{{ include "ipfs.fullname" . }}-0.{{ include "ipfs.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+        if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-cluster-0" ]; then
+            base_addr=/dns4/{{ include "ipfs.fullname" . }}-cluster-0.{{ include "ipfs.fullname" . }}-cluster.{{ .Release.Namespace }}.svc.cluster.local
             if [ -n "$CLUSTER_RESTAPI_BASICAUTHCREDENTIALS" ]; then
                 auth_opts="--basic-auth $CLUSTER_RESTAPI_BASICAUTHCREDENTIALS --force-http"
             fi
@@ -137,3 +150,4 @@ data:
     extra_opts="--stats"
     {{- end }}
     exec ipfs-cluster-service $@ $bootstrap $extra_opts
+{{- end }}

@@ -1,32 +1,62 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "ipfs.fullname" . }}
+  name: {{ include "ipfs.fullname" . }}-peer-metrics
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: ipfs-peer
 spec:
   ports:
     - port: 5001
       protocol: TCP
       name: metrics
       targetPort: api
-    {{- if .Values.metrics.enabled }}
-    {{- if .Values.cluster.enabled }}
+  clusterIP: None
+  selector:
+    {{- include "ipfs.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs-peer
+
+---
+{{- if .Values.cluster.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ipfs.fullname" . }}-cluster-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs-cluster
+spec:
+  ports:
     - port: 8888
       protocol: TCP
       name: cluster-metrics
       targetPort: cluster-metrics
-    {{- end }}
-    {{- if .Values.apiProxy.enabled }}
+  clusterIP: None
+  selector:
+    {{- include "ipfs.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs-cluster
+{{- end }}
+
+---
+{{- if .Values.apiProxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ipfs.fullname" . }}-api-proxy-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api-proxy
+spec:
+  ports:
     - port: 6002
       protocol: TCP
       name: proxy-metrics
       targetPort: proxy-metrics
-    {{- end }}
-    {{- end }}
   clusterIP: None
   selector:
     {{- include "ipfs.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: api-proxy
+{{- end }}

@@ -1,0 +1,68 @@
+---
+# API Proxy StatefulSet
+{{- if .Values.apiProxy.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "ipfs.fullname" . }}-proxy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api-proxy
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.replicas }}
+  serviceName: {{ include "ipfs.fullname" . }}-proxy
+  selector:
+    matchLabels:
+      {{- include "ipfs.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: api-proxy
+  template:
+    metadata:
+      labels:
+        {{- include "ipfs.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: api-proxy
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "ipfs.serviceAccountName" . }}
+      containers:
+        - name: api-proxy
+          image: traefik:2.6
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: api-proxy
+              containerPort: 6001
+              protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: proxy-metrics
+              containerPort: 6002
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            tcpSocket:
+              port: api-proxy
+          readinessProbe:
+            tcpSocket:
+              port: api-proxy
+          volumeMounts:
+            - name: traefik-conf
+              mountPath: /etc/traefik/
+          resources:
+            {{- toYaml .Values.apiProxy.resources | nindent 12 }}
+      volumes:
+        - name: traefik-conf
+          configMap:
+            name: {{ include "ipfs.fullname" . }}-traefik
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

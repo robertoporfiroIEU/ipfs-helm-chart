@@ -6,7 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: api-proxy
 data:
   traefik.yaml: |-
     global:
@@ -65,8 +65,8 @@ data:
           loadBalancer:
             servers:
               {{- if .Values.cluster.enabled }}
-              - url: "http://localhost:9095"
+              - url: "http://{{ include "ipfs.fullname" . }}-cluster:9095"
               {{- else }}
-              - url: "http://localhost:5001"
+              - url: "http://{{ include "ipfs.fullname" . }}-peer:5001"
               {{- end }}
 {{- end }}

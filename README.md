@@ -7,3 +7,6 @@ A Helm chart for deploying a private IPFS cluster on Kubernetes
 ~~~bash
   helm upgrade --install ipfs-cluster ./helm/ipfs/ --create-namespace --namespace ipfs --values helm/ipfs/values.yaml
 ~~~
+
+
+helm upgrade --install ipfs-cluster ./helm/ipfs/ --create-namespace --namespace ipfs-rob --values helm/ipfs/values.yaml

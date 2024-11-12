@@ -1,3 +1,6 @@
+---
+# IPFS Peer Service
+{{- if and (not .Values.cluster.enabled) (not .Values.apiProxy.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,27 +8,70 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: ipfs-peer
 spec:
   type: {{ .Values.service.api.type }}
   ports:
     - port: {{ .Values.service.api.port }}
-      {{- if .Values.apiProxy.enabled }}
-      # map the api to the api proxy, so we can use the same service
-      # with and without the proxy
-      targetPort: api-proxy
-      {{- else if .Values.cluster.enabled }}
-      # map the api to the cluster proxy, so we can use the same service
-      # with and without ipfs-cluster
-      targetPort: cluster-proxy
-      {{- else }}
       targetPort: api
-      {{- end }}
       protocol: TCP
       name: api
-  {{- if .Values.service.api.ipAddress }}
+{{- if .Values.service.api.ipAddress }}
   loadBalancerIP: {{ .Values.service.api.ipAddress | quote }}
-  {{- end }}
+{{- end }}
   selector:
     {{- include "ipfs.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: ipfs-peer
+{{- end }}
+
+---
+# IPFS Cluster Service
+{{- if .Values.cluster.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ipfs.fullname" . }}-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs-cluster
+spec:
+  type: {{ .Values.service.api.type }}
+  ports:
+    - port: {{ .Values.service.api.port }}
+      targetPort: cluster-proxy
+      protocol: TCP
+      name: cluster-proxy
+{{- if .Values.service.api.ipAddress }}
+  loadBalancerIP: {{ .Values.service.api.ipAddress | quote }}
+{{- end }}
+  selector:
+    {{- include "ipfs.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ipfs-cluster
+{{- end }}
+
+---
+# API Proxy Service
+{{- if .Values.apiProxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ipfs.fullname" . }}-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ipfs.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api-proxy
+spec:
+  type: {{ .Values.service.api.type }}
+  ports:
+    - port: {{ .Values.service.api.port }}
+      targetPort: api-proxy
+      protocol: TCP
+      name: api-proxy
+{{- if .Values.service.api.ipAddress }}
+  loadBalancerIP: {{ .Values.service.api.ipAddress | quote }}
+{{- end }}
+  selector:
+    {{- include "ipfs.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: api-proxy
+{{- end }}

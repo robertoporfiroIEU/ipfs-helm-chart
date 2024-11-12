@@ -33,12 +33,12 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: ipfs-cluster
 spec:
   selector:
     matchLabels:
       {{- include "ipfs.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: ipfs
+      app.kubernetes.io/component: ipfs-cluster
   endpoints:
     - port: cluster-metrics
       {{- if .Values.metrics.interval }}
@@ -60,12 +60,12 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ipfs.labels" . | nindent 4 }}
-    app.kubernetes.io/component: ipfs
+    app.kubernetes.io/component: api-proxy
 spec:
   selector:
     matchLabels:
       {{- include "ipfs.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: ipfs
+      app.kubernetes.io/component: api-proxy
   endpoints:
     - port: proxy-metrics
       {{- if .Values.metrics.interval }}
