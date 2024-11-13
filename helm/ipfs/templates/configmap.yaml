@@ -84,10 +84,10 @@ data:
         ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '["X-Requested-With", "Range", "User-Agent"]'
     fi
     
-    if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-peer-0" ] ; then
-        peer_id=`ipfs --api /dns4/{{ include "ipfs.fullname" . }}-peer-0.{{ include "ipfs.fullname" . }}-peer/tcp/5001 id -f '<id>'`
-        ipfs bootstrap add /dns4/{{ include "ipfs.fullname" . }}-peer-0.{{ include "ipfs.fullname" . }}-peer/tcp/4001/p2p/$peer_id
-    fi
+    # if [ "$HOSTNAME" != "{{ include "ipfs.fullname" . }}-peer-0" ] ; then
+    #     peer_id=`ipfs --api /dns4/{{ include "ipfs.fullname" . }}-peer-0.{{ include "ipfs.fullname" . }}-peer/tcp/5001 id -f '<id>'`
+    #     ipfs bootstrap add /dns4/{{ include "ipfs.fullname" . }}-peer-0.{{ include "ipfs.fullname" . }}-peer/tcp/4001/p2p/$peer_id
+    # fi
     
     # use the args (deamon) from statefulset.yaml file
     exec ipfs "$@"

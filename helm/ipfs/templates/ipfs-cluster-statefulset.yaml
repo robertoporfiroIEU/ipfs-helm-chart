@@ -35,6 +35,9 @@ spec:
           image: "{{ .Values.cluster.image.repository }}:{{ .Values.cluster.image.tag }}"
           imagePullPolicy: IfNotPresent
           env:
+            #POD_INDEX=$(hostname | awk -F'-' '{print $NF}');
+            - name: CLUSTER_IPFSHTTP_NODEMULTIADDRESS
+              value: /dns4/{{ include "ipfs.fullname" $ }}-peer-api.{{ $.Release.Namespace }}.svc.cluster.local/tcp/5001
             - name: CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS
               value: /ip4/0.0.0.0/tcp/9094
             - name: CLUSTER_SECRET
